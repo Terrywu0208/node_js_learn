@@ -25,16 +25,32 @@ const sendResponse = (filename, statusCode, response) =>{
 const server = http.createServer((request, response) =>{
     console.log(request.url, request.method);
     const method = request.method;
-    const url = request.url;
+    let url = request.url;
     //get 方式請求 並回傳對應網頁 基礎應用
     if (method === "GET"){
         const requestURL = new URL(url, `http://${ip}:${port}`);
-        if (url === "/") {
-            sendResponse("index.html",200,response);
-        }else if (url === "/about.html") {
-            sendResponse("about.html",200,response);
+        console.log(requestURL);
+        console.log(requestURL.searchParams.get("lang"));
+        url = requestURL.pathname;
+        //get 取得參數
+        const lang = requestURL.searchParams.get("lang");
+        //get 取得參數
+        let selector;
+
+        if (lang === null || lang === "en") {
+            selector = "";
+        } else if (lang === "zh"){
+            selector = "-zh";
         }else{
-            sendResponse("404.html",404,response);
+            selector = "";
+        }
+
+        if (url === "/") {
+            sendResponse(`index${selector}.html`,200,response);
+        }else if (url === "/about.html") {
+            sendResponse(`about${selector}.html`,200,response);
+        }else{
+            sendResponse(`404${selector}.html`,404,response);
         }
     }
     //get 方式請求 並回傳對應網頁
